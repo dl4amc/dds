@@ -48,7 +48,7 @@ def to_onehot(yy):
     yy1[np.arange(len(yy)), yy] = 1
     return yy1
 Y_snr = to_onehot(map(lambda x: mods.index(lbl[x][0]), range(X.shape[0])))
-print "shape of X", np.shape(X)
+print("shape of X", np.shape(X))
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 num_samples = 64
 new_X = []
