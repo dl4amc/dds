@@ -66,7 +66,7 @@ for eva_iter in range(X.shape[0]//60000):
         new_snr_data = np.append(snr_data[:idx], np.zeros((1, snr_data.shape[1], snr_data.shape[2])), axis=0)
         snr_data = np.append(new_snr_data, snr_data[idx+1:], axis=0)
         snr_data = snr_data.transpose((2, 1, 0))
-        score = orig_model.evaluate(snr_data, snr_out, batch_size=6000, verbose=0)
+        score = orig_model.evaluate(snr_data, snr_out, batch_size=60000, verbose=0)
         snr_acc_list.append((idx, score[1]))
     snr_acc_list.sort(key=lambda x: x[1])
     snr_acc_list = snr_acc_list[:num_samples]
