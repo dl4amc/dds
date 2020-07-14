@@ -36,17 +36,21 @@ snrs, mods = map(lambda j: sorted(list(set(map(lambda x: x[j], Xd.keys())))), [1
 X = []
 Y_snr = []
 lbl = []
-for mod in mods:
-    for snr in snrs:
+for snr in snrs:
+    for mod in mods:
         X.append(Xd[(mod, snr)])
         for i in range(Xd[(mod, snr)].shape[0]):  lbl.append((mod, snr))
-    Y_snr = Y_snr + [mod]*120000
+        Y_snr = Y_snr + [mod]*6000
 X = np.vstack(X)
 Y_snr = np.vstack(Y_snr)
+
+
 def to_onehot(yy):
     yy1 = np.zeros([len(yy), max(yy) + 1])
     yy1[np.arange(len(yy)), yy] = 1
     return yy1
+
+
 Y_snr = to_onehot(map(lambda x: mods.index(lbl[x][0]), range(X.shape[0])))
 print("shape of X", np.shape(X))
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,9 +61,9 @@ cldnn = load_model('../models/cldnn_ranker.h5')
 cnn = load_model('../models/cnn_ranker.h5')
 resnet = load_model('../models/resnet_ranker.h5')
 
-for eva_iter in range(X.shape[0]//6000):
-    snr_data = X[eva_iter*6000:(eva_iter+1)*6000]
-    snr_out = Y_snr[eva_iter*6000:(eva_iter+1)*6000]
+for eva_iter in range(X.shape[0]//60000):
+    snr_data = X[eva_iter*60000:(eva_iter+1)*60000]
+    snr_out = Y_snr[eva_iter*60000:(eva_iter+1)*60000]
 
     cldnn_list = []
     cnn_list = []
@@ -74,11 +78,11 @@ for eva_iter in range(X.shape[0]//6000):
         snr_data = np.append(new_snr_data, snr_data[idx+1:], axis=0)
         snr_data = snr_data.transpose((2, 1, 0))
 
-        cldnn_score = cldnn.evaluate(snr_data, snr_out, batch_size=6000, verbose=0)
+        cldnn_score = cldnn.evaluate(snr_data, snr_out, batch_size=60000, verbose=0)
         cldnn_list.append((idx, cldnn_score[1]))
-        cnn_score = cnn.evaluate(snr_data, snr_out, batch_size=6000, verbose=0)
+        cnn_score = cnn.evaluate(snr_data, snr_out, batch_size=60000, verbose=0)
         cnn_list.append((idx, cnn_score[1]))
-        resnet_score = resnet.evaluate(snr_data, snr_out, batch_size=6000, verbose=0)
+        resnet_score = resnet.evaluate(snr_data, snr_out, batch_size=60000, verbose=0)
         resnet_list.append((idx, resnet_score[1]))
 
     cldnn_list.sort(key=lambda x: x[1])
