@@ -57,6 +57,14 @@ def to_onehot(yy):
 
 
 Y_snr = to_onehot(map(lambda x: mods.index(lbl[x][0]), range(X.shape[0])))
+
+# Use only the train split
+np.random.seed(2016)
+n_examples = X.shape[0]
+n_train = n_examples // 2
+train_idx = np.random.choice(range(0, n_examples), size=n_train, replace=False)
+X = X[train_idx]
+
 print("shape of X", np.shape(X))
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 num_samples = 64
