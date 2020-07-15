@@ -25,7 +25,6 @@ K.tensorflow_backend._get_available_gpus()
 K.set_image_dim_ordering('th')
 
 
-# In[2]:
 # data pre-processing
 Xd = cPickle.load(open("../data/RML2016.10b_dict.dat", 'rb'))
 snrs,mods = map(lambda j: sorted(list(set(map(lambda x: x[j], Xd.keys())))), [1,0])
@@ -50,14 +49,18 @@ def to_onehot(yy):
     return yy1
 
 
-Y_snr = to_onehot(map(lambda x: mods.index(lbl[x][0]), range(X.shape[0])))
-
 # Use only the train split
 np.random.seed(2016)
 n_examples = X.shape[0]
-n_train = n_examples // 2
-train_idx = np.random.choice(range(0, n_examples), size=n_train, replace=False)
-X = X[train_idx]
+n_train_valid = n_examples // 2
+train_valid_idx = np.random.choice(range(0, n_examples), size=n_train_valid, replace=False)
+X_train_valid = X[train_valid_idx]
+n_train = 3 * n_train_valid // 4
+train_idx = np.random.choice(range(0, n_train_valid), size=n_train, replace=False)
+X = X_train_valid[train_idx]
+valid_idx = list(set(range(0, n_train_valid))-set(train_idx))
+X_valid = X_train_valid[valid_idx]
+Y_snr = to_onehot(map(lambda x: mods.index(lbl[x][0]), range(X.shape[0])))
 
 print("shape of X", np.shape(X))
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
